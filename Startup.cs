@@ -1,5 +1,6 @@
 using aspnetcore_vue.Models.Identity;
 using aspnetcore_vue.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace aspnetcore_vue
 {
@@ -32,6 +35,25 @@ namespace aspnetcore_vue
             services.AddDbContext<IdentityAppContext>(cfg =>
             {
                 cfg.UseSqlServer(Configuration.GetConnectionString("IdentityContext"));
+            });
+
+            services.ConfigureApplicationCookie(cfg =>
+            {
+               cfg.Events = new CookieAuthenticationEvents
+               {
+                   OnRedirectToLogin = ctx =>
+                   {
+                       if (ctx.Request.Path.StartsWithSegments("/api"))
+                       {
+                           ctx.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                       }
+                       else
+                       {
+                           ctx.Response.Redirect(ctx.RedirectUri);
+                       }
+                       return Task.FromResult(0);
+                   }
+               };
             });
 
 
