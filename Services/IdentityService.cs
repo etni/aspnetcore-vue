@@ -22,7 +22,7 @@ namespace aspnetcore_vue.Services
             RoleManager = roleManager;
         }
 
-        public async Task<SignInResult> SignInAsync(string username, string password)
+        public async Task<SignInResult> SignIn(string username, string password)
         {
             return await SignInManager.PasswordSignInAsync(username, password, false, false);
         }

@@ -21,12 +21,16 @@ namespace aspnetcore_vue.Controllers.api
 
 
         [HttpPost("[action]")]
-        public IActionResult Login(UserSignInModel model)
+        public async Task<IActionResult> Login([FromBody]UserSignInModel model)
         {
             //System.Threading.Thread.Sleep(500); // Fake latency
 
-            var result = new { loggedIn = true };
-            return Ok(result);
+            var result = await Service.SignIn(model.username, model.password);
+            if (result.Succeeded)
+            {
+                return Ok(await Service.GetUserProfile(model.username));
+            }
+            return BadRequest(result);
         }
 
         [HttpGet("[action]")]
@@ -81,7 +85,7 @@ namespace aspnetcore_vue.Controllers.api
         [HttpGet("[action]")]
         public async Task<IActionResult> TestLogin()
         {
-            var result = await Service.SignInAsync("testuser", "Password!23");
+            var result = await Service.SignIn("testuser", "Password!23");
             if (result.Succeeded)
             {
                 return Ok(await Service.GetUserProfile("testuser"));
