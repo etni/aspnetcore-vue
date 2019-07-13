@@ -1,9 +1,14 @@
+using aspnetcore_vue.Models.Identity;
+using aspnetcore_vue.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace aspnetcore_vue
 {
@@ -19,9 +24,22 @@ namespace aspnetcore_vue
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<IdentityAppContext>();
+
+            services.AddDbContext<IdentityAppContext>(cfg =>
+            {
+                cfg.UseSqlServer(Configuration.GetConnectionString("IdentityContext"));
+            });
+
+
             // Add framework services.
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddTransient<IdentityService>();
 
             // Simple example with dependency injection for a data provider.
             services.AddSingleton<Providers.IWeatherProvider, Providers.WeatherProviderFake>();
@@ -47,6 +65,8 @@ namespace aspnetcore_vue
             }
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
