@@ -20,3 +20,5 @@ export {
   router,
   store
 }
+
+window.store = store

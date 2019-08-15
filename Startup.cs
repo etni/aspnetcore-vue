@@ -27,34 +27,11 @@ namespace aspnetcore_vue
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentity<AppUser, AppRole>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-            }).AddEntityFrameworkStores<IdentityAppContext>();
 
-            services.AddDbContext<IdentityAppContext>(cfg =>
-            {
-                cfg.UseSqlServer(Configuration.GetConnectionString("IdentityContext"));
-            });
 
-            services.ConfigureApplicationCookie(cfg =>
-            {
-               cfg.Events = new CookieAuthenticationEvents
-               {
-                   OnRedirectToLogin = ctx =>
-                   {
-                       if (ctx.Request.Path.StartsWithSegments("/api"))
-                       {
-                           ctx.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                       }
-                       else
-                       {
-                           ctx.Response.Redirect(ctx.RedirectUri);
-                       }
-                       return Task.FromResult(0);
-                   }
-               };
-            });
+            services.ConfigureAppIdentity(Configuration);
+
+            services.ConfigureUnauthorizedApi();
 
 
             // Add framework services.

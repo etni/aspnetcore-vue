@@ -11,12 +11,12 @@ namespace aspnetcore_vue.Controllers.api
     [Route("api/[controller]")]
     public class IdentityController : Controller
     {
-        public IdentityService Service { get; }
+        public IdentityService Identity { get; }
 
 
         public IdentityController(IdentityService service)
         {
-            Service = service;
+            Identity = service;
         }
 
 
@@ -25,10 +25,10 @@ namespace aspnetcore_vue.Controllers.api
         {
             //System.Threading.Thread.Sleep(500); // Fake latency
 
-            var result = await Service.SignIn(model.username, model.password);
+            var result = await Identity.SignIn(model.username, model.password);
             if (result.Succeeded)
             {
-                return Ok(await Service.GetUserProfile(model.username));
+                return Ok(await Identity.GetUserProfile(model.username));
             }
             return BadRequest(result);
         }
@@ -36,7 +36,7 @@ namespace aspnetcore_vue.Controllers.api
         [HttpGet("[action]")]
         public async Task<IActionResult> LogOut()
         {
-            await Service.SignOut();
+            await Identity.SignOut();
             return Ok();
         }
 
@@ -53,7 +53,7 @@ namespace aspnetcore_vue.Controllers.api
         [Authorize]
         public async Task<IActionResult> WhoAmI()
         {
-            var user = await Service.GetUserProfile(User.Identity.Name);
+            var user = await Identity.GetUserProfile(User.Identity.Name);
             return Ok(user);
         }
 
@@ -71,7 +71,7 @@ namespace aspnetcore_vue.Controllers.api
                 Email = "testuser@test.com"
             };
 
-            if ( await Service.Register(user) )
+            if ( await Identity.Register(user) )
             {
                 user.Password = string.Empty;
                 return Ok(new { result = "Ok", user });
@@ -85,10 +85,10 @@ namespace aspnetcore_vue.Controllers.api
         [HttpGet("[action]")]
         public async Task<IActionResult> TestLogin()
         {
-            var result = await Service.SignIn("testuser", "Password!23");
+            var result = await Identity.SignIn("testuser", "Password!23");
             if (result.Succeeded)
             {
-                return Ok(await Service.GetUserProfile("testuser"));
+                return Ok(await Identity.GetUserProfile("testuser"));
             }
             return BadRequest();
         }

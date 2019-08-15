@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import identity from './modules/identity.module'
+
 Vue.use(Vuex)
 
 // TYPES
@@ -28,5 +30,8 @@ const actions = ({
 export default new Vuex.Store({
   state,
   mutations,
-  actions
+  actions,
+  modules: {
+    identity
+  }
 })

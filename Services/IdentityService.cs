@@ -59,6 +59,7 @@ namespace aspnetcore_vue.Services
         public async Task<UserProfileModel> GetUserProfile(string username)
         {
             var user = await GetUser(username);
+
             return new UserProfileModel
             {
                 Username = user.UserName,

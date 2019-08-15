@@ -19,13 +19,11 @@ module.exports = () => {
         'vue$': 'vue/dist/vue',
         'components': path.resolve(__dirname, '../components'),
         'views': path.resolve(__dirname, '../views'),
-        'utils': path.resolve(__dirname, '../utils'),
-        'api': path.resolve(__dirname, '../store/api')
+        'utils': path.resolve(__dirname, '../utils')
       } : {
         'components': path.resolve(__dirname, '../components'),
         'views': path.resolve(__dirname, '../views'),
-        'utils': path.resolve(__dirname, '../utils'),
-        'api': path.resolve(__dirname, '../store/api')
+        'utils': path.resolve(__dirname, '../utils')
       }
     },
     output: {
